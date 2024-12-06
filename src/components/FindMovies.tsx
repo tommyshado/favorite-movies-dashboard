@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { IMovies } from "./types/IMovies";
+import { Button, Form, InputGroup } from "react-bootstrap";
 
 export function FindMovies({
   onMoviesReceived,
@@ -44,22 +45,32 @@ export function FindMovies({
   }, [debouncedMovie]);
 
   return (
-    <div>
-      <h1>Find Movies</h1>
-      <input
-        type="text"
-        placeholder="Search..."
-        value={movie}
-        onChange={(e) => setMovie(e.target.value)}
-      />
-      <button
-        onClick={(e) => {
-          e.preventDefault();
-          fetchMovies(movie); // Fetch movies immediately when the button is clicked
-        }}
-      >
-        Search
-      </button>
+    <div className="text-center my-4">
+      <h1 className="mb-3">Find Movies</h1>
+      <Form onSubmit={(e) => {
+        e.preventDefault();
+        fetchMovies(movie);
+      }}>
+        <InputGroup className="mb-3">
+          <Form.Control
+            type="text"
+            placeholder="Search for movies..."
+            value={movie}
+            onChange={(e) => {
+              setMovie(e.target.value);
+              if (!e.target.value) {
+                onMoviesReceived([]);
+              }
+            }}
+          />
+          <Button 
+            variant="primary" 
+            type="submit"
+          >
+            Search
+          </Button>
+        </InputGroup>
+      </Form>
     </div>
   );
 }
