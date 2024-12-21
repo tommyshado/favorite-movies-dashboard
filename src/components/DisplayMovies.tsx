@@ -1,17 +1,38 @@
-import { Card, Row, Col } from 'react-bootstrap';
+import { Card, Row, Col, Button } from 'react-bootstrap';
+import { IMovie } from './types/IMovie';
+import { MoviesApi } from '../api/MoviesApi';
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import { useEffect, useState } from 'react';
 
-export interface IMovies {
-  id: number;
-  title: string;
-  backdrop_path: string;
-  overview: string;
-}
+export function DisplayMovies({ moviesList }: { moviesList: IMovie[] }) {
+  const [favorites, setFavorites] = useState<IMovie[]>([]);
 
-export function DisplayMovies({ moviesList }: { moviesList: IMovies[] }) {
+  const fetchFavorites = async () => {
+    try {
+      const favorites = await MoviesApi.getFavorites(1);
+      const favoriteMovies = Array.isArray(favorites)
+        ? favorites
+        : favorites.results || [];
+
+      setFavorites(favoriteMovies);
+    } catch (error) {
+      console.error('Error fetching favorites:', error);
+      setFavorites([]);
+    }
+  };
+
+  const isFavorite = (movie: IMovie) => {
+    return favorites.some((fav) => fav.id === movie.id);
+  };
+
+  useEffect(() => {
+    fetchFavorites();
+  }, []);
+
   return (
     <div>
-      <h1 className="text-center my-4">Searched Movies</h1>
-      <Row>
+      <h3 className="text-center my-4">Searched Movies</h3>
+      <Row className='justify-content-center flex-wrap'>
         {moviesList.length > 0 ? (
           moviesList.map((movie) => (
             <Col key={movie.id} xs={12} sm={6} md={4} lg={3} className="mb-4">
@@ -30,6 +51,20 @@ export function DisplayMovies({ moviesList }: { moviesList: IMovies[] }) {
                       : movie.overview}
                   </Card.Text>
                 </Card.Body>
+
+                <Button
+                  onClick={() => {
+                    MoviesApi.addToFavorites(1, movie);
+                  }}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: 'grey',
+                  }}
+                >
+                  {isFavorite(movie) ? <FaHeart /> : <FaRegHeart />}
+                </Button>
               </Card>
             </Col>
           ))

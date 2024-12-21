@@ -1,11 +1,11 @@
 import { DisplayMovies } from "./DisplayMovies";
 import { FindMovies } from "./FindMovies";
 import { useState } from "react";
-import { IMovies } from "./types/IMovies";
+import { IMovie } from "./types/IMovie";
 import { Container, Row, Col } from "react-bootstrap";
 
 export function Movies() {
-  const [movies, setMovies] = useState<IMovies[]>([]);
+  const [movies, setMovies] = useState<IMovie[]>([]);
   return (
     <Container className="d-flex flex-column align-items-center">
       <Row className="w-100 justify-content-center">

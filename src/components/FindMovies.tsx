@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { IMovies } from "./types/IMovies";
+import { IMovie } from "./types/IMovie";
 import { Button, Form, InputGroup } from "react-bootstrap";
 
 export function FindMovies({
   onMoviesReceived,
 }: {
-  onMoviesReceived: (movies: IMovies[]) => void;
+  onMoviesReceived: (movies: IMovie[]) => void;
 }) {
   const [movie, setMovie] = useState("");
   const [debouncedMovie, setDebouncedMovie] = useState("");
@@ -30,8 +30,19 @@ export function FindMovies({
           `${process.env.MOVIES_API_KEY}&query=${query}`
         )
         .then((res) => {
-          console.log("******************", res.data);
-          onMoviesReceived(res.data.results as IMovies[]);
+          const data = res.data.results;
+          const movies = data.map((movie: any) => {
+            return {
+              id: movie.id,
+              title: movie.title,
+              backdrop_path: movie.backdrop_path,
+              overview: movie.overview,
+              language: movie.original_language,
+              release_date: movie.release_date
+            };
+          })
+
+          onMoviesReceived(movies);
         })
         .catch((err) => {
           console.error(err);
@@ -46,7 +57,7 @@ export function FindMovies({
 
   return (
     <div className="text-center my-4">
-      <h1 className="mb-3">Find Movies</h1>
+      <h2 className="mb-3">Find Movies</h2>
       <Form onSubmit={(e) => {
         e.preventDefault();
         fetchMovies(movie);
