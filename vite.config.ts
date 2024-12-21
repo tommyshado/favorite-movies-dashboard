@@ -10,4 +10,8 @@ export default defineConfig({
       MOVIES_API_KEY: process.env.MOVIES_API_KEY,
     },
   },
+  server: {
+    host: '0.0.0.0', // Bind to 0.0.0.0 to allow external access
+    port: 3000,      // Ensure the correct port is used
+  },
 });
